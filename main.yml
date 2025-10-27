@@ -1,0 +1,73 @@
+name: Postman Collection Workflow
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "30 02 * * *"
+    - cron: "00 14 * * *"
+
+jobs:
+  run-postman-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v5
+
+      - name: Install Node.js & npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install Newman and HTML Extra globally
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Run the Postman collection with Newman
+        run: |
+          newman run "InWarranty flow Copy.postman_collection.json" \
+            -e QA.postman_environment.json \
+            -d Testdata.csv \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export newman/NewmanReport.html
+
+      - name: Upload Newman HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: Newman Report
+          path: newman/*.html
+
+      - name: Creating GitHub Page branch
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: newman/
+
+      - name: Send email notifications
+        if: always()
+        uses: dawidd6/action-send-mail@v6
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Phoneix In-Warranty Flow Report"
+          to: "vrushalibhise16@gmail.com"
+          from: "Automation Bot <${{ secrets.EMAIL_USERNAME }}>"
+          body: |
+            Hello Team,
+
+            The Postman collection has been executed successfully.
+
+            You can download the HTML report from the attached file.
+
+            Regards,
+            Automation Bot
+          attachments: newman/NewmanReport.html
+          debug: true
