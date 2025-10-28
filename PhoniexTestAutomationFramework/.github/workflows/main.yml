@@ -11,23 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code from your repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Java
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # Step 3: Execute Test Automation framework (run inside project folder)
       - name: Execute Test Automation framework
-        working-directory: PhoniexTestAutomationFramework
-        run: mvn clean test -DsuiteXmlFile=testng.xml -Denv=qa
+        run: |
+          cd PhoniexTestAutomationFramework
+          ls -l
+          mvn clean test -DsuiteXmlFile=testng.xml -Denv=qa
 
-      # Step 4: Upload test reports as artifact (always runs)
       - name: Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v4
