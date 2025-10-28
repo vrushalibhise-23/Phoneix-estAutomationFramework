@@ -1,6 +1,5 @@
 name: Phoneix Test Automation Automation Tests
 
-
 on:
   push:
     branches: [ master ]
@@ -23,5 +22,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run Maven tests
+      # Step 3: Execute Test Automation framework
+      - name: Execute Test Automation framework
         run: mvn clean test -DsuiteXmlFile=testng.xml -Denv=qa
+
+      # Step 4: Upload test reports as artifact (always runs)
+      - name: Upload Test Reports
+        if: always()  # ensures upload runs even if previous steps fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            target/surefire-reports/
+          retention-days: 7  # keep artifacts for 7 days
