@@ -22,7 +22,6 @@ jobs:
 
       - name: Build and test using Maven
         run: |
-          cd PhoniexTestAutomationFramework
           mvn clean test -DsuiteXmlFile=testng.xml -Denv=qa
 
       - name: Upload Test Reports
@@ -31,6 +30,6 @@ jobs:
         with:
           name: test-reports
           path: |
-            PhoniexTestAutomationFramework/target/surefire-reports/
-            PhoniexTestAutomationFramework/test-output/
+            target/surefire-reports/
+            test-output/
           retention-days: 7
