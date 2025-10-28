@@ -22,7 +22,12 @@ jobs:
 
       - name: Execute Test Automation framework
         run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing files in current directory:"
+          ls -R
           cd PhoniexTestAutomationFramework
+          echo "Now inside PhoniexTestAutomationFramework folder"
           ls -l
           mvn clean test -DsuiteXmlFile=testng.xml -Denv=qa
 
