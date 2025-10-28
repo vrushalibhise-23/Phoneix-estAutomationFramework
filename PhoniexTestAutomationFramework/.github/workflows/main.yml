@@ -1,4 +1,4 @@
-name: Phoneix Test Automation Automation Tests
+name: Run Maven Tests
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -20,15 +20,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Execute Test Automation framework
+      - name: Build and test using Maven
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Listing files in current directory:"
-          ls -R
           cd PhoniexTestAutomationFramework
-          echo "Now inside PhoniexTestAutomationFramework folder"
-          ls -l
           mvn clean test -DsuiteXmlFile=testng.xml -Denv=qa
 
       - name: Upload Test Reports
@@ -38,5 +32,5 @@ jobs:
           name: test-reports
           path: |
             PhoniexTestAutomationFramework/target/surefire-reports/
-            PhoniexTestAutomationFramework/target/allure-results/
+            PhoniexTestAutomationFramework/test-output/
           retention-days: 7
